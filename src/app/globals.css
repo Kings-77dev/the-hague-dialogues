@@ -286,10 +286,13 @@
   .event-poster:hover .event-reveal { opacity: 1; pointer-events: auto; }
   .event-poster:hover .event-info { transform: translateY(0); }
   .event-poster:hover .event-register { transform: translateX(0); }
+  /* On touch devices, keep the resting state (photo + bottom titlebar) instead
+     of pinning the dark reveal open. Tapping the card already navigates to the
+     full event page where the same info lives, so we don't need both layers
+     stacked on mobile. */
   @media (hover: none) {
-    .event-poster .event-reveal { opacity: 1; pointer-events: auto; }
-    .event-poster .poster-titlebar { display: none; }
-    .event-poster img { filter: saturate(0.74) brightness(0.62) contrast(1.04); }
+    .event-poster .event-reveal { opacity: 0; pointer-events: none; }
+    .event-poster .poster-titlebar { display: flex; }
   }
 
   /* ---------- Article cards ---------- */
