@@ -2,6 +2,7 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {client} from '@/sanity/client'
 import {SETTINGS_QUERY} from '@/sanity/queries'
+import {NewsletterForm} from '@/components/NewsletterForm'
 
 export const metadata: Metadata = {
   title: 'Get Involved — The Hague Dialogues',
@@ -67,9 +68,9 @@ const FAQ = [
 
 export default async function GetInvolvedPage() {
   const settings = await client.fetch(SETTINGS_QUERY)
-  const donateHref = settings?.supportUrl ?? '#'
+  const supportHref = settings?.supportUrl ?? '/get-involved'
   const pathways = PATHWAYS.map((p, i) =>
-    i === PATHWAYS.length - 1 ? {...p, href: donateHref} : p,
+    i === PATHWAYS.length - 1 ? {...p, href: supportHref} : p,
   )
 
   return (
@@ -94,7 +95,8 @@ export default async function GetInvolvedPage() {
           <div className="pathways">
             {pathways.map((p) => (
               <Link className="pathway" key={p.num} href={p.href}>
-                <span className="pw-num">{p.num}</span>
+                {/* Numbering removed (backlog 6): these are parallel paths, not
+                    sequential steps. */}
                 <h3>{p.title}</h3>
                 <p>{p.body}</p>
                 <span className="pw-link">
@@ -119,13 +121,28 @@ export default async function GetInvolvedPage() {
               </div>
             ))}
           </div>
+
+          {/* In-page "Stay in the loop" — Footer suppresses its newsletter on
+              this route (02-E: one newsletter per page). Nested in the same
+              dark section to preserve the navy/cream band rhythm. */}
+          <div className="gi-newsletter">
+            <div className="gi-newsletter-copy">
+              <p className="eyebrow">Stay in the loop</p>
+              <h2 className="display about-h2">Get our newsletter.</h2>
+              <p>
+                One short note when a new dialogue is on the calendar or a recap is
+                published. No spam.
+              </p>
+            </div>
+            <NewsletterForm />
+          </div>
         </div>
       </section>
 
       {/* ---- FAQ ---- */}
       <section className="section paper">
         <div className="container">
-          <p className="eyebrow">Frequently asked</p>
+          {/* eyebrow "Frequently asked" dropped: doc 02-A explicit example. */}
           <h2 className="display about-h2">Good to know.</h2>
           <div className="faq">
             {FAQ.map((f, i) => (

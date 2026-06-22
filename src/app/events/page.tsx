@@ -11,11 +11,23 @@ export const metadata: Metadata = {
   description: 'Upcoming and past dialogues in The Hague.',
 }
 
-export default async function EventsPage() {
+type SearchParams = Promise<{topic?: string}>
+
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const sp = await searchParams
+  const activeTopic = sp.topic ?? null
   const now = new Date().toISOString()
-  const data = await client.fetch(EVENTS_QUERY, {now})
-  const {upcoming, past, community} = data
+  const data = await client.fetch(EVENTS_QUERY, {now, topic: activeTopic})
+  const {upcoming, past, community, topics} = data
   const openCall = community[0]
+
+  // Build filter URL preserving everything but `topic`.
+  const filterHref = (slug: string | null) =>
+    slug ? `/events?topic=${encodeURIComponent(slug)}` : '/events'
 
   return (
     <>
@@ -24,26 +36,32 @@ export default async function EventsPage() {
         <div className="container">
           <p className="eyebrow">Events</p>
           <h1 className="display">Upcoming &amp; past sessions</h1>
-          {/* Filters are visual-only for now (Stage 5 refinement: wire to ?topic=). */}
+        </div>
+      </section>
+
+      {/* ---- Sticky filter bar (backlog 3) ---- */}
+      <section className="filter-bar dark">
+        <div className="container">
           <div className="filters">
-            <button className="filter active" type="button">
+            <Link
+              href={filterHref(null)}
+              className={`filter${activeTopic === null ? ' active' : ''}`}
+            >
               All
-            </button>
-            <button className="filter" type="button">
-              Geopolitics
-            </button>
-            <button className="filter" type="button">
-              Policy
-            </button>
-            <button className="filter" type="button">
-              Philosophy
-            </button>
-            <button className="filter" type="button">
-              Society
-            </button>
-            <button className="filter" type="button">
-              Identity
-            </button>
+            </Link>
+            {topics.map((t) => (
+              <Link
+                key={t._id}
+                href={filterHref(t.slug)}
+                className={`filter${activeTopic === t.slug ? ' active' : ''}`}
+              >
+                {t.title}
+              </Link>
+            ))}
+            <span className="filter-count">
+              {upcoming.length + past.length} session
+              {upcoming.length + past.length === 1 ? '' : 's'}
+            </span>
           </div>
         </div>
       </section>
@@ -67,8 +85,8 @@ export default async function EventsPage() {
         </section>
       )}
 
-      {/* ---- Community / open call ---- */}
-      {openCall && (
+      {/* ---- Community / open call (only when no topic filter applied) ---- */}
+      {openCall && !activeTopic && (
         <section className="community-cta">
           <div className="container">
             <div className="cc-inner">
@@ -101,6 +119,23 @@ export default async function EventsPage() {
                 <EventPosterCard key={event._id} event={event} status="past" />
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Empty state when the filter returns nothing */}
+      {upcoming.length === 0 && past.length === 0 && (
+        <section className="events-section ev-dark">
+          <div className="container">
+            <p className="eyebrow">No matches</p>
+            <h2 className="display about-h2" style={{marginTop: 18}}>
+              No sessions for this topic yet.
+            </h2>
+            <p style={{marginTop: 16, color: 'rgba(255,255,255,0.65)'}}>
+              <Link href="/events" className="card-cta">
+                Clear filter <span aria-hidden>→</span>
+              </Link>
+            </p>
           </div>
         </section>
       )}

@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Sanity Studio has its own ESLint config; lint it from there.
+    "studio-the-hague-dialogues/**",
+    // Generated TypeGen output — no point linting machine-emitted types.
+    "src/sanity.types.ts",
   ]),
 ]);
 

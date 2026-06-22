@@ -6,6 +6,13 @@ export const aboutContent = defineType({
   title: 'About',
   type: 'document',
   fields: [
+    defineField({
+      name: 'heroImage',
+      title: 'Hero image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Scene photo on the right side of the About hero. Wide aspect works best.',
+    }),
     defineField({name: 'founding', title: 'Founding story', type: 'array', of: [{type: 'block'}]}),
     defineField({
       name: 'stats',

@@ -121,14 +121,7 @@ export default async function ArticlePage({params}: {params: Promise<Params>}) {
 
       {/* ---- Cover ---- */}
       <figure className="cover">
-        <div className="relative w-full" style={{height: 'clamp(280px, 44vw, 540px)'}}>
-          <SanityImage
-            image={article.coverImage}
-            alt={article.title}
-            sizes="100vw"
-            priority
-          />
-        </div>
+        <SanityImage image={article.coverImage} alt={article.title} sizes="100vw" priority />
       </figure>
 
       {/* ---- Body: share rail + prose ---- */}

@@ -27,3 +27,7 @@
 
 # Dotenv and similar local-only files
 *.local
+
+# Sanity TypeGen artifacts (regenerated locally; not needed in repo)
+/schema.json
+/seed/seed.ndjson

@@ -12,10 +12,49 @@ export const metadata: Metadata = {
   description: 'Recaps, highlights and photo series from our dialogues.',
 }
 
-const FORMAT_PILLS = ['All', 'Interviews', 'Debates', 'Panels', 'Photo series'] as const
+const FORMATS = ['Interview', 'Debate', 'Panel', 'Photo series'] as const
+type Format = (typeof FORMATS)[number]
+type Sort = 'newest' | 'oldest'
 
-export default async function MediaPage() {
-  const data = await client.fetch(MEDIA_QUERY, {format: null, topic: null, sort: 'newest'})
+type SearchParams = Promise<{
+  format?: string
+  topic?: string
+  sort?: string
+  q?: string
+}>
+
+function buildHref(
+  base: Record<string, string | null | undefined>,
+  override: Record<string, string | null>,
+) {
+  const merged = {...base, ...override}
+  const params = new URLSearchParams()
+  for (const [k, v] of Object.entries(merged)) {
+    if (v) params.set(k, v)
+  }
+  const qs = params.toString()
+  return qs ? `/media?${qs}` : '/media'
+}
+
+export default async function MediaPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const sp = await searchParams
+  const activeFormat = (FORMATS as readonly string[]).includes(sp.format ?? '')
+    ? (sp.format as Format)
+    : null
+  const activeTopic = sp.topic && sp.topic.trim() ? sp.topic : null
+  const sort: Sort = sp.sort === 'oldest' ? 'oldest' : 'newest'
+  const q = sp.q?.trim() ? sp.q.trim() : null
+
+  const data = await client.fetch(MEDIA_QUERY, {
+    format: activeFormat,
+    topic: activeTopic,
+    sort,
+    q,
+  })
   const {featured, items, topics} = data
 
   return (
@@ -54,23 +93,49 @@ export default async function MediaPage() {
         </div>
       </section>
 
-      {/* ---- Toolbar (visual-only filters for now) ---- */}
+      {/* ---- Sticky toolbar (backlog 5): real GET form ---- */}
       <section className="m-toolbar">
         <div className="container">
-          <div className="m-toolbar-inner">
+          <form
+            className="m-toolbar-inner"
+            action="/media"
+            method="get"
+            // Trigger a navigation on any select change (no JS state needed).
+            // The submit button is a fallback for the text input.
+          >
             <div className="m-search">
               <svg viewBox="0 0 24 24" aria-hidden>
                 <circle cx="11" cy="11" r="7" strokeWidth={2} />
                 <path d="M21 21l-4.3-4.3" strokeWidth={2} />
               </svg>
-              <input type="text" placeholder="Search media…" />
+              <label htmlFor="m-q" className="sr-only">
+                Search media
+              </label>
+              <input
+                id="m-q"
+                name="q"
+                type="search"
+                placeholder="Search media…"
+                defaultValue={q ?? ''}
+              />
             </div>
             <div className="m-controls">
+              {/* Format pills as Links (no JS needed). Inactive pills clear `format`. */}
               <div className="m-pills">
-                {FORMAT_PILLS.map((p, i) => (
-                  <button key={p} className={`m-pill${i === 0 ? ' active' : ''}`} type="button">
-                    {p}
-                  </button>
+                <Link
+                  href={buildHref({topic: activeTopic, sort, q}, {format: null})}
+                  className={`m-pill${activeFormat === null ? ' active' : ''}`}
+                >
+                  All
+                </Link>
+                {FORMATS.map((f) => (
+                  <Link
+                    key={f}
+                    href={buildHref({topic: activeTopic, sort, q}, {format: f})}
+                    className={`m-pill${activeFormat === f ? ' active' : ''}`}
+                  >
+                    {f === 'Photo series' ? 'Photo series' : `${f}s`}
+                  </Link>
                 ))}
               </div>
               <div className="m-selects">
@@ -78,7 +143,11 @@ export default async function MediaPage() {
                   <label htmlFor="topic-select" className="sr-only">
                     Topic
                   </label>
-                  <select id="topic-select" defaultValue="">
+                  <select
+                    id="topic-select"
+                    name="topic"
+                    defaultValue={activeTopic ?? ''}
+                  >
                     <option value="">All topics</option>
                     {topics.map((t) => (
                       <option key={t._id} value={t.slug ?? ''}>
@@ -91,20 +160,26 @@ export default async function MediaPage() {
                   <label htmlFor="sort-select" className="sr-only">
                     Sort by
                   </label>
-                  <select id="sort-select" defaultValue="newest">
+                  <select id="sort-select" name="sort" defaultValue={sort}>
                     <option value="newest">Newest</option>
                     <option value="oldest">Oldest</option>
                   </select>
                 </div>
               </div>
+              {/* Hidden format input lets the submit button preserve the active
+                  format pill when the user submits the search. */}
+              {activeFormat && <input type="hidden" name="format" value={activeFormat} />}
+              <button type="submit" className="sr-only" tabIndex={-1}>
+                Apply
+              </button>
             </div>
-          </div>
+          </form>
         </div>
       </section>
 
-      {/* ---- Featured ---- */}
-      {featured && (
-        <section className="section dark" style={{padding: 0}}>
+      {/* ---- Featured (only when no filters active) ---- */}
+      {featured && !activeFormat && !activeTopic && !q && (
+        <section className="section dark flush">
           <div className="container">
             <div className="m-feat-label">
               <p className="eyebrow">Featured</p>
@@ -143,8 +218,8 @@ export default async function MediaPage() {
       )}
 
       {/* ---- Grid ---- */}
-      {items.length > 0 && (
-        <section className="section dark" style={{paddingTop: 0}}>
+      {items.length > 0 ? (
+        <section className="section dark flush-top">
           <div className="container">
             <div className="media-grid">
               {items.map((m) => (
@@ -172,6 +247,20 @@ export default async function MediaPage() {
                 </Link>
               ))}
             </div>
+          </div>
+        </section>
+      ) : (
+        <section className="section dark">
+          <div className="container">
+            <p className="eyebrow">No matches</p>
+            <h2 className="display about-h2" style={{marginTop: 18}}>
+              Nothing here yet.
+            </h2>
+            <p style={{marginTop: 16, color: 'rgba(255,255,255,0.65)'}}>
+              <Link href="/media" className="card-cta">
+                Clear filters <span aria-hidden>→</span>
+              </Link>
+            </p>
           </div>
         </section>
       )}

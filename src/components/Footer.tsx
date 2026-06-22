@@ -1,19 +1,28 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import {usePathname} from 'next/navigation'
 import {NewsletterForm} from './NewsletterForm'
 import {FOOTER_NAV} from '@/lib/nav'
+import {DEFAULTS} from '@/lib/defaults'
 import type {SETTINGS_QUERY_RESULT} from '@/sanity.types'
 
 type FooterProps = {
   settings: SETTINGS_QUERY_RESULT
-  donateHref: string
-  /** Suppress the footer newsletter (Get Involved has its own — deferred 02-E). */
-  suppressNewsletter?: boolean
+  supportHref: string
 }
 
+// Routes that render their own in-page newsletter (per doc 02-E).
+const ROUTES_WITH_OWN_NEWSLETTER = ['/get-involved']
+
 /** Faithful to the prototype `.footer`. */
-export function Footer({settings, donateHref, suppressNewsletter = false}: FooterProps) {
-  const instagram = settings?.instagramUrl ?? 'https://www.instagram.com/thehaguedialogues/'
+export function Footer({settings, supportHref}: FooterProps) {
+  const pathname = usePathname()
+  const suppressNewsletter = ROUTES_WITH_OWN_NEWSLETTER.some((r) =>
+    pathname?.startsWith(r),
+  )
+  const instagram = settings?.instagramUrl ?? DEFAULTS.instagramUrl
   return (
     <footer className="footer" id="footer">
       <div className="container">
@@ -29,13 +38,11 @@ export function Footer({settings, donateHref, suppressNewsletter = false}: Foote
         <div className="footer-bottom">
           <div>
             <Link href="/" aria-label="The Hague Dialogues home" className="logo">
+              {/* alt="" because the link's aria-label already names the destination */}
               <Image src="/logo-mark.png" alt="" width={108} height={55} />
             </Link>
             <p>
-              <small>
-                {settings?.tagline ??
-                  'Building bridges through understanding and open discussion.'}
-              </small>
+              <small>{settings?.tagline ?? DEFAULTS.siteTagline}</small>
             </p>
           </div>
           <nav className="footer-links">
@@ -48,8 +55,8 @@ export function Footer({settings, donateHref, suppressNewsletter = false}: Foote
               Instagram
             </a>
           </nav>
-          <Link href={donateHref} className="btn">
-            Give
+          <Link href={supportHref} className="btn">
+            Support
           </Link>
         </div>
       </div>

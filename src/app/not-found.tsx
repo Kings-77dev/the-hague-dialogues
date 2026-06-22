@@ -21,7 +21,7 @@ export default function NotFound() {
         </div>
       </section>
       <section className="section paper">
-        <div className="container" style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+        <div className="container nf-actions">
           <Link className="btn light" href="/">
             Home <span className="arrow">→</span>
           </Link>

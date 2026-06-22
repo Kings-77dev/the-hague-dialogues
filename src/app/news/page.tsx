@@ -13,11 +13,29 @@ export const metadata: Metadata = {
   description: 'Recaps, opinions, and announcements from across the dialogue.',
 }
 
-const FORMATS = ['All', 'Recap', 'Opinion', 'Announcement', 'Interview'] as const
+const FORMATS = ['Recap', 'Opinion', 'Announcement', 'Interview'] as const
+type Format = (typeof FORMATS)[number]
 
-export default async function NewsPage() {
-  const data = await client.fetch(NEWS_QUERY, {format: null, limit: 24})
+type SearchParams = Promise<{format?: string}>
+
+export default async function NewsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const sp = await searchParams
+  const rawFormat = sp.format
+  const activeFormat: Format | null = (FORMATS as readonly string[]).includes(
+    rawFormat ?? '',
+  )
+    ? (rawFormat as Format)
+    : null
+
+  const data = await client.fetch(NEWS_QUERY, {format: activeFormat, limit: 24})
   const {featured, articles, total} = data
+
+  const filterHref = (f: Format | null) =>
+    f ? `/news?format=${encodeURIComponent(f)}` : '/news'
 
   return (
     <>
@@ -32,10 +50,38 @@ export default async function NewsPage() {
         </div>
       </section>
 
+      {/* ---- Sticky filter bar (backlog 4) ---- */}
+      <section className="filter-bar paper">
+        <div className="container">
+          <div className="filters">
+            <Link
+              href={filterHref(null)}
+              className={`filter${activeFormat === null ? ' active' : ''}`}
+            >
+              All
+            </Link>
+            {FORMATS.map((f) => (
+              <Link
+                key={f}
+                href={filterHref(f)}
+                className={`filter${activeFormat === f ? ' active' : ''}`}
+              >
+                {f}
+              </Link>
+            ))}
+            <span className="filter-count">
+              {total} article{total === 1 ? '' : 's'}
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* ---- Featured + grid ---- */}
       <section className="section paper">
         <div className="container">
-          {featured && (
+          {/* Hide the "featured" card when a format filter is active — featured
+              is curated and shouldn't override the filter's intent. */}
+          {featured && !activeFormat && (
             <Link
               className="featured block"
               href={`/news/${featured.slug?.current ?? ''}`}
@@ -61,23 +107,25 @@ export default async function NewsPage() {
             </Link>
           )}
 
-          <div className="articles-head">
-            {/* Tabs are visual-only for this pass (Stage refinement: wire to ?format=) */}
-            <div className="tabs">
-              {FORMATS.map((f, i) => (
-                <button key={f} className={i === 0 ? 'active' : ''} type="button">
-                  {f}
-                </button>
+          {articles.length > 0 ? (
+            <div className="article-grid">
+              {articles.map((article) => (
+                <ArticleCard key={article._id} article={article} />
               ))}
             </div>
-            <span className="view-all">{total} articles</span>
-          </div>
-
-          <div className="article-grid">
-            {articles.map((article) => (
-              <ArticleCard key={article._id} article={article} />
-            ))}
-          </div>
+          ) : (
+            <div style={{padding: '40px 0'}}>
+              <p className="eyebrow">No matches</p>
+              <h2 className="display about-h2" style={{marginTop: 18}}>
+                No {activeFormat ? `${activeFormat.toLowerCase()} ` : ''}articles yet.
+              </h2>
+              <p style={{marginTop: 16, color: '#48555f'}}>
+                <Link href="/news" className="card-cta" style={{color: 'var(--navy)'}}>
+                  Clear filter <span aria-hidden>→</span>
+                </Link>
+              </p>
+            </div>
+          )}
 
           {articles.length < total && (
             <div className="load-more">

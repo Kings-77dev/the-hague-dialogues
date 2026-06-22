@@ -1,5 +1,5 @@
 import type {Metadata} from 'next'
-import Image from 'next/image'
+import Link from 'next/link'
 import {client} from '@/sanity/client'
 import {ABOUT_QUERY} from '@/sanity/queries'
 import {SanityImage} from '@/components/SanityImage'
@@ -25,14 +25,11 @@ export default async function AboutPage() {
       {/* ---- Hero ---- */}
       <section className="about-hero">
         <div className="about-hero-media">
-          {/* Hardcoded scene photo until aboutContent gets a heroImage field. */}
-          <Image
-            src="/images/2dd88902-e748-4b73-8d8c-30951a47c421.jpeg"
-            alt="A Hague Dialogues session at De Haagse Hogeschool"
-            fill
+          <SanityImage
+            image={about?.heroImage}
+            alt=""
             sizes="(max-width: 1000px) 100vw, 50vw"
             priority
-            style={{objectFit: 'cover'}}
           />
         </div>
         <div className="container">
@@ -116,7 +113,7 @@ export default async function AboutPage() {
       {team.length > 0 && (
         <section className="section dark">
           <div className="container">
-            <p className="eyebrow">The people</p>
+            {/* eyebrow "The people" dropped: restates the heading (02-A). */}
             <h2 className="display about-h2">The people behind the dialogue.</h2>
             <div className="team-grid">
               {team.map((m) => (
@@ -138,6 +135,14 @@ export default async function AboutPage() {
                 </article>
               ))}
             </div>
+            {/* General team-contact CTA (backlog 8) — keeps the page free of
+                personal contact details while giving visitors a clear path. */}
+            <div className="team-contact">
+              <p>Want to reach the team?</p>
+              <Link className="card-cta" href="/contact">
+                Contact us <span aria-hidden>→</span>
+              </Link>
+            </div>
           </div>
         </section>
       )}
@@ -146,7 +151,7 @@ export default async function AboutPage() {
       {partners.length > 0 && (
         <section className="section paper">
           <div className="container">
-            <p className="eyebrow">Affiliated with</p>
+            {/* eyebrow "Affiliated with" dropped to stay under 4 eyebrows/page (02-A). */}
             <h2 className="display about-h2">In good company.</h2>
             <div className="partner-grid">
               {partners.map((p) =>

@@ -18,6 +18,8 @@ export function MobileMenu() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
+  // SSR-safe mount check so the portal renders only after hydration.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), [])
 
   const setMenu = useCallback((next: boolean) => {
@@ -25,8 +27,9 @@ export function MobileMenu() {
     document.body.classList.toggle('menu-open', next)
   }, [])
 
-  // Close on route change.
+  // Close the menu when the route changes. The setState here is intentional.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenu(false)
   }, [pathname, setMenu])
 

@@ -4,20 +4,21 @@ import {DesktopNav} from './DesktopNav'
 import {MobileMenu} from './MobileMenu'
 
 type HeaderProps = {
-  donateHref: string
+  supportHref: string
 }
 
 /** Fixed 74px header — faithful to the prototype `.site-header`. */
-export function Header({donateHref}: HeaderProps) {
+export function Header({supportHref}: HeaderProps) {
   return (
     <header className="site-header">
       <div className="header-inner">
         <Link href="/" aria-label="The Hague Dialogues home" className="logo">
+          {/* alt="" because the link's aria-label already names the destination */}
           <Image src="/logo-mark.png" alt="" width={108} height={55} priority />
         </Link>
         <DesktopNav />
-        <Link href={donateHref} className="donate-top">
-          Donate Now
+        <Link href={supportHref} className="donate-top">
+          Support
         </Link>
         <MobileMenu />
       </div>

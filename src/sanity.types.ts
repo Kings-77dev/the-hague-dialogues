@@ -505,11 +505,12 @@ export type AllSanitySchemaTypes =
 
 // Source: ../src/sanity/queries.ts
 // Variable: HOME_QUERY
-// Query: {  "home": *[_type == "homeContent"][0]{    heroHeading, heroLede,    quote{ text, attribution->{name, role} },    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }  },  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,    "venue": venue->name  },  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage  },  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{    _id, title, slug, format, thumbnail, durationLabel, url  }}
+// Query: {  "home": *[_type == "homeContent"][0]{    heroHeading, heroLede,    heroImages[]{ ..., asset, alt, label },    quote{ text, attribution->{name, role} },    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }  },  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,    "venue": venue->name  },  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage  },  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{    _id, title, slug, format, thumbnail, durationLabel, url  }}
 export type HOME_QUERY_RESULT = {
   home: {
     heroHeading: string | null;
     heroLede: string | null;
+    heroImages: null;
     quote: {
       text: string | null;
       attribution: {
@@ -584,7 +585,7 @@ export type HOME_QUERY_RESULT = {
 
 // Source: ../src/sanity/queries.ts
 // Variable: EVENTS_QUERY
-// Query: {  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc){    _id, title, slug, startsAt, "topic": topic->title, format, coverImage, "venue": venue->name  },  "past": *[_type == "event" && !isCommunity && startsAt < $now] | order(startsAt desc){    _id, title, slug, startsAt, "topic": topic->title, format, "venue": venue->name, coverImage, recapUrl, recapType  },  "community": *[_type == "event" && isCommunity] | order(startsAt desc)[0...1]{    _id, title, slug  }}
+// Query: {  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now      && (!defined($topic) || topic->slug.current == $topic)    ] | order(startsAt asc){    _id, title, slug, startsAt, "topic": topic->title, format, coverImage, "venue": venue->name  },  "past": *[_type == "event" && !isCommunity && startsAt < $now      && (!defined($topic) || topic->slug.current == $topic)    ] | order(startsAt desc){    _id, title, slug, startsAt, "topic": topic->title, format, "venue": venue->name, coverImage, recapUrl, recapType  },  "community": *[_type == "event" && isCommunity] | order(startsAt desc)[0...1]{    _id, title, slug  },  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }}
 export type EVENTS_QUERY_RESULT = {
   upcoming: Array<{
     _id: string;
@@ -624,6 +625,11 @@ export type EVENTS_QUERY_RESULT = {
     _id: string;
     title: string;
     slug: Slug;
+  }>;
+  topics: Array<{
+    _id: string;
+    title: string;
+    slug: string | null;
   }>;
 };
 
@@ -848,7 +854,7 @@ export type ARTICLE_BY_SLUG_QUERY_RESULT = {
 
 // Source: ../src/sanity/queries.ts
 // Variable: MEDIA_QUERY
-// Query: {  "featured": *[_type == "mediaItem" && featured == true] | order(publishedAt desc)[0]{    _id, title, slug, format, thumbnail, durationLabel, url  },  "items": *[_type == "mediaItem"      && (!defined($format) || format == $format)      && (!defined($topic) || topic->slug.current == $topic)    ] | order(        select($sort == "oldest" => publishedAt) asc,        select($sort != "oldest" => publishedAt) desc      ){    _id, title, slug, format, thumbnail, durationLabel, url, publishedAt  },  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }}
+// Query: {  "featured": *[_type == "mediaItem" && featured == true] | order(publishedAt desc)[0]{    _id, title, slug, format, thumbnail, durationLabel, url  },  "items": *[_type == "mediaItem"      && (!defined($format) || format == $format)      && (!defined($topic) || topic->slug.current == $topic)      && (!defined($q) || title match ($q + "*"))    ] | order(        select($sort == "oldest" => publishedAt) asc,        select($sort != "oldest" => publishedAt) desc      ){    _id, title, slug, format, thumbnail, durationLabel, url, publishedAt  },  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }}
 export type MEDIA_QUERY_RESULT = {
   featured: {
     _id: string;
@@ -890,8 +896,9 @@ export type MEDIA_QUERY_RESULT = {
 
 // Source: ../src/sanity/queries.ts
 // Variable: ABOUT_QUERY
-// Query: *[_type == "aboutContent"][0]{  founding, stats, values,  "team": team[]->{ _id, name, role, photo, isCutout },  "partners": partners[]->{ _id, name, logo, url }}
+// Query: *[_type == "aboutContent"][0]{  heroImage, founding, stats, values,  "team": team[]->{ _id, name, role, photo, isCutout },  "partners": partners[]->{ _id, name, logo, url }}
 export type ABOUT_QUERY_RESULT = {
+  heroImage: null;
   founding: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -984,13 +991,13 @@ export type SITEMAP_SLUGS_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '{\n  "home": *[_type == "homeContent"][0]{\n    heroHeading, heroLede,\n    quote{ text, attribution->{name, role} },\n    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }\n  },\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,\n    "venue": venue->name\n  },\n  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{\n    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage\n  },\n  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{\n    _id, title, slug, format, thumbnail, durationLabel, url\n  }\n}': HOME_QUERY_RESULT;
-    '{\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc){\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage, "venue": venue->name\n  },\n  "past": *[_type == "event" && !isCommunity && startsAt < $now] | order(startsAt desc){\n    _id, title, slug, startsAt, "topic": topic->title, format, "venue": venue->name, coverImage, recapUrl, recapType\n  },\n  "community": *[_type == "event" && isCommunity] | order(startsAt desc)[0...1]{\n    _id, title, slug\n  }\n}': EVENTS_QUERY_RESULT;
+    '{\n  "home": *[_type == "homeContent"][0]{\n    heroHeading, heroLede,\n    heroImages[]{ ..., asset, alt, label },\n    quote{ text, attribution->{name, role} },\n    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }\n  },\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,\n    "venue": venue->name\n  },\n  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{\n    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage\n  },\n  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{\n    _id, title, slug, format, thumbnail, durationLabel, url\n  }\n}': HOME_QUERY_RESULT;
+    '{\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now\n      && (!defined($topic) || topic->slug.current == $topic)\n    ] | order(startsAt asc){\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage, "venue": venue->name\n  },\n  "past": *[_type == "event" && !isCommunity && startsAt < $now\n      && (!defined($topic) || topic->slug.current == $topic)\n    ] | order(startsAt desc){\n    _id, title, slug, startsAt, "topic": topic->title, format, "venue": venue->name, coverImage, recapUrl, recapType\n  },\n  "community": *[_type == "event" && isCommunity] | order(startsAt desc)[0...1]{\n    _id, title, slug\n  },\n  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }\n}': EVENTS_QUERY_RESULT;
     '*[_type == "event" && slug.current == $slug][0]{\n  _id, title, startsAt, endsAt, entryNote, registrationUrl, recapUrl, recapType, standfirst,\n  "topic": topic->title, format, coverImage, body,\n  "venue": venue->{ name, addressLine, city },\n  "speakers": speakers[]->{ _id, name, role, photo, isCutout },\n  "related": *[_type == "event" && _id != ^._id && topic._ref == ^.topic._ref] | order(startsAt desc)[0...3]{\n    _id, title, slug, startsAt, "topic": topic->title, coverImage\n  }\n}': EVENT_BY_SLUG_QUERY_RESULT;
     '{\n  "featured": *[_type == "article" && featured == true] | order(publishedAt desc)[0]{\n    _id, title, slug, standfirst, publishedAt, "topic": topic->title, format, coverImage, readingMinutes,\n    "author": author->{ name }\n  },\n  "articles": *[_type == "article" && (!defined($format) || format == $format)] | order(publishedAt desc)[0...$limit]{\n    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage\n  },\n  "total": count(*[_type == "article" && (!defined($format) || format == $format)])\n}': NEWS_QUERY_RESULT;
     '*[_type == "article" && slug.current == $slug][0]{\n  _id, title, standfirst, publishedAt, readingMinutes, "topic": topic->title, format, coverImage,\n  "author": author->{ name, role, photo, isCutout, bio },\n  body[]{ ..., _type == "pullquote" => { text, "attribution": attribution->{name, role} },\n          _type == "image" => { ..., asset } },\n  "related": *[_type == "article" && _id != ^._id && topic._ref == ^.topic._ref] | order(publishedAt desc)[0...3]{\n    _id, title, slug, publishedAt, "topic": topic->title, coverImage\n  }\n}': ARTICLE_BY_SLUG_QUERY_RESULT;
-    '{\n  "featured": *[_type == "mediaItem" && featured == true] | order(publishedAt desc)[0]{\n    _id, title, slug, format, thumbnail, durationLabel, url\n  },\n  "items": *[_type == "mediaItem"\n      && (!defined($format) || format == $format)\n      && (!defined($topic) || topic->slug.current == $topic)\n    ] | order(\n        select($sort == "oldest" => publishedAt) asc,\n        select($sort != "oldest" => publishedAt) desc\n      ){\n    _id, title, slug, format, thumbnail, durationLabel, url, publishedAt\n  },\n  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }\n}': MEDIA_QUERY_RESULT;
-    '*[_type == "aboutContent"][0]{\n  founding, stats, values,\n  "team": team[]->{ _id, name, role, photo, isCutout },\n  "partners": partners[]->{ _id, name, logo, url }\n}': ABOUT_QUERY_RESULT;
+    '{\n  "featured": *[_type == "mediaItem" && featured == true] | order(publishedAt desc)[0]{\n    _id, title, slug, format, thumbnail, durationLabel, url\n  },\n  "items": *[_type == "mediaItem"\n      && (!defined($format) || format == $format)\n      && (!defined($topic) || topic->slug.current == $topic)\n      && (!defined($q) || title match ($q + "*"))\n    ] | order(\n        select($sort == "oldest" => publishedAt) asc,\n        select($sort != "oldest" => publishedAt) desc\n      ){\n    _id, title, slug, format, thumbnail, durationLabel, url, publishedAt\n  },\n  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }\n}': MEDIA_QUERY_RESULT;
+    '*[_type == "aboutContent"][0]{\n  heroImage, founding, stats, values,\n  "team": team[]->{ _id, name, role, photo, isCutout },\n  "partners": partners[]->{ _id, name, logo, url }\n}': ABOUT_QUERY_RESULT;
     '*[_type == "siteSettings"][0]{\n  title, tagline, supportUrl, email, instagramUrl, linkedinUrl, defaultOgImage\n}': SETTINGS_QUERY_RESULT;
     '{\n  "events": *[_type == "event" && !isCommunity && defined(slug.current)]{\n    "slug": slug.current, _updatedAt\n  },\n  "articles": *[_type == "article" && defined(slug.current)]{\n    "slug": slug.current, _updatedAt\n  }\n}': SITEMAP_SLUGS_QUERY_RESULT;
   }

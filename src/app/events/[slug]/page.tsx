@@ -143,14 +143,7 @@ export default async function EventDetailPage({params}: {params: Promise<Params>
 
       {/* ---- Cover image ---- */}
       <figure className="ev-cover">
-        <div className="relative w-full" style={{height: 'clamp(280px, 42vw, 520px)'}}>
-          <SanityImage
-            image={event.coverImage}
-            alt={event.title}
-            sizes="100vw"
-            priority
-          />
-        </div>
+        <SanityImage image={event.coverImage} alt={event.title} sizes="100vw" priority />
       </figure>
 
       {/* ---- Layout: prose + speakers / register ---- */}

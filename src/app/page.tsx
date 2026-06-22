@@ -3,13 +3,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {client} from '@/sanity/client'
 import {HOME_QUERY, SETTINGS_QUERY} from '@/sanity/queries'
-import {SanityImage} from '@/components/SanityImage'
 import {EventPosterCard} from '@/components/EventPosterCard'
 import {ArticleCard} from '@/components/ArticleCard'
 import {MediaPosterCard} from '@/components/MediaPosterCard'
+import {HeroSlideshow} from '@/components/HeroSlideshow'
 import {JsonLd} from '@/components/JsonLd'
 import {formatDate, formatTime} from '@/lib/date'
 import {SITE_URL} from '@/lib/site'
+import {DEFAULTS} from '@/lib/defaults'
 
 export const revalidate = 300
 
@@ -17,9 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const data = await client.fetch(HOME_QUERY, {now: new Date().toISOString()})
   return {
     title: 'The Hague Dialogues',
-    description:
-      data.home?.heroLede ??
-      'A student-led platform in The Hague creating spaces for open, challenging, and constructive conversations.',
+    description: data.home?.heroLede ?? DEFAULTS.homeHeroLede,
   }
 }
 
@@ -30,7 +29,8 @@ export default async function Home() {
     client.fetch(SETTINGS_QUERY),
   ])
   const {home, upcoming, latestNews, media} = data
-  const donateHref = settings?.supportUrl ?? '/get-involved'
+  // Homepage CTAs now point to /events (participation first). Donation remains
+  // available via the chrome (header + footer Support buttons).
   const featured = home?.featuredEvent
   const [featuredMedia, ...restMedia] = media
 
@@ -51,21 +51,17 @@ export default async function Home() {
       <section className="hero">
         <div className="hero-grid">
           <div className="hero-copy">
-            <h1 className="display">
-              {home?.heroHeading ?? 'Where opposing ideas meet with respect'}
-            </h1>
+            <h1 className="display">{home?.heroHeading ?? DEFAULTS.homeHeroHeading}</h1>
             <div className="underline" />
-            <p>
-              {home?.heroLede ??
-                'A student-led platform in The Hague creating spaces for open, challenging, and constructive conversations about society, politics, identity, and the future.'}
-            </p>
+            <p>{home?.heroLede ?? DEFAULTS.homeHeroLede}</p>
           </div>
           <article className="feature-event">
-            <SanityImage
-              image={featured?.coverImage}
-              alt={featured?.title ?? 'Next event'}
-              sizes="(max-width: 1000px) 100vw, 52vw"
-              priority
+            {/* Hero slideshow (backlog 9). Falls back to the featured event
+                cover when homeContent.heroImages is empty. */}
+            <HeroSlideshow
+              slides={home?.heroImages ?? []}
+              fallback={featured?.coverImage ?? null}
+              fallbackAlt={featured?.title ?? 'Next event'}
             />
             <div className="feature-event-content">
               <p className="eyebrow">Next event</p>
@@ -90,15 +86,12 @@ export default async function Home() {
       {/* ---- Intro strip ---- */}
       <section className="intro-strip">
         <div className="container intro-grid">
-          <h2>{settings?.title ?? 'The Hague Dialogues'}</h2>
-          <p>
-            A civic forum for students, professionals, and the wider community. We host
-            dialogues that make difficult questions public, thoughtful, and human.
-          </p>
+          <h2>{settings?.title ?? DEFAULTS.siteTitle}</h2>
+          <p>{DEFAULTS.introStripBody}</p>
           <aside className="mini-donate">
-            <small>Help keep open dialogue alive in The Hague.</small>
-            <Link className="btn light" href={donateHref}>
-              Donate <span className="arrow">→</span>
+            <small>{DEFAULTS.miniDonateBody}</small>
+            <Link className="btn light" href="/events">
+              Join the next dialogue <span className="arrow">→</span>
             </Link>
           </aside>
         </div>
@@ -166,18 +159,19 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ---- Support ---- */}
-      <section className="support" id="donate">
+      {/* ---- Participation band ---- (was the Support CTA; doc 02-B-ish:
+           homepage guides toward participation first, donation lives in chrome.) */}
+      <section className="support" id="join">
         <div className="container support-inner">
           <div>
-            <h2 className="display">Support open dialogue in The Hague</h2>
+            <h2 className="display">Join the next dialogue in The Hague</h2>
             <p>
-              Every contribution helps us host more events, publish thoughtful recaps, and
-              bring more voices into the room.
+              Attend a dialogue, ask better questions, and meet people willing to discuss
+              difficult topics with respect.
             </p>
           </div>
-          <Link className="btn light" href={donateHref}>
-            Donate now <span className="arrow">→</span>
+          <Link className="btn light" href="/events">
+            Explore events <span className="arrow">→</span>
           </Link>
         </div>
       </section>
@@ -188,19 +182,27 @@ export default async function Home() {
           <div className="involve-title">Get involved</div>
           <Link className="involve-card" href="/get-involved">
             <h3>Volunteer</h3>
-            <span className="small-btn">Join →</span>
+            <span className="small-btn">
+              Join <span className="arrow" aria-hidden>→</span>
+            </span>
           </Link>
           <Link className="involve-card" href="/get-involved">
             <h3>Speak</h3>
-            <span className="small-btn">Propose →</span>
+            <span className="small-btn">
+              Propose <span className="arrow" aria-hidden>→</span>
+            </span>
           </Link>
           <Link className="involve-card" href="/get-involved">
             <h3>Partner</h3>
-            <span className="small-btn">Contact →</span>
+            <span className="small-btn">
+              Contact <span className="arrow" aria-hidden>→</span>
+            </span>
           </Link>
           <Link className="involve-card dark" href="/get-involved">
             <h3>Idea Box</h3>
-            <span className="small-btn">Suggest →</span>
+            <span className="small-btn">
+              Suggest <span className="arrow" aria-hidden>→</span>
+            </span>
           </Link>
         </div>
       </section>

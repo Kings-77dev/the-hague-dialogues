@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { client } from "@/sanity/client";
 import { SETTINGS_QUERY } from "@/sanity/queries";
 import { SITE_URL } from "@/lib/site";
+import { DEFAULTS } from "@/lib/defaults";
 import { urlFor } from "@/sanity/image";
 
 const montserrat = Montserrat({
@@ -27,27 +28,27 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImg = settings?.defaultOgImage
     ? urlFor(settings.defaultOgImage).width(1200).height(630).fit("crop").auto("format").url()
     : undefined;
+  const siteTitle = settings?.title ?? DEFAULTS.siteTitle;
+  const tagline = settings?.tagline ?? DEFAULTS.siteTagline;
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: settings?.title ?? "The Hague Dialogues",
-      template: "%s — The Hague Dialogues",
+      default: siteTitle,
+      template: `%s — ${siteTitle}`,
     },
-    description:
-      settings?.tagline ??
-      "A student-led platform in The Hague creating spaces for open, challenging, and constructive conversations.",
+    description: tagline,
     openGraph: {
       type: "website",
-      siteName: settings?.title ?? "The Hague Dialogues",
+      siteName: siteTitle,
       url: SITE_URL,
-      title: settings?.title ?? "The Hague Dialogues",
-      description: settings?.tagline ?? undefined,
+      title: siteTitle,
+      description: tagline,
       ...(ogImg ? { images: [{ url: ogImg, width: 1200, height: 630 }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
-      title: settings?.title ?? "The Hague Dialogues",
-      description: settings?.tagline ?? undefined,
+      title: siteTitle,
+      description: tagline,
       ...(ogImg ? { images: [ogImg] } : {}),
     },
   };
@@ -59,7 +60,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settings = await client.fetch(SETTINGS_QUERY);
-  const donateHref = settings?.supportUrl ?? "/get-involved";
+  const supportHref = settings?.supportUrl ?? DEFAULTS.supportHref;
 
   return (
     <html
@@ -67,9 +68,9 @@ export default async function RootLayout({
       className={`${montserrat.variable} ${dmSans.variable} antialiased`}
     >
       <body>
-        <Header donateHref={donateHref} />
+        <Header supportHref={supportHref} />
         <main>{children}</main>
-        <Footer settings={settings} donateHref={donateHref} />
+        <Footer settings={settings} supportHref={supportHref} />
       </body>
     </html>
   );

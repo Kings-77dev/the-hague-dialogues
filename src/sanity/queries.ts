@@ -5,6 +5,7 @@ import {defineQuery} from 'next-sanity'
 export const HOME_QUERY = defineQuery(`{
   "home": *[_type == "homeContent"][0]{
     heroHeading, heroLede,
+    heroImages[]{ ..., asset, alt, label },
     quote{ text, attribution->{name, role} },
     featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }
   },
@@ -20,16 +21,22 @@ export const HOME_QUERY = defineQuery(`{
   }
 }`)
 
+// $topic: a topic slug string or null (no filter).
 export const EVENTS_QUERY = defineQuery(`{
-  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc){
+  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now
+      && (!defined($topic) || topic->slug.current == $topic)
+    ] | order(startsAt asc){
     _id, title, slug, startsAt, "topic": topic->title, format, coverImage, "venue": venue->name
   },
-  "past": *[_type == "event" && !isCommunity && startsAt < $now] | order(startsAt desc){
+  "past": *[_type == "event" && !isCommunity && startsAt < $now
+      && (!defined($topic) || topic->slug.current == $topic)
+    ] | order(startsAt desc){
     _id, title, slug, startsAt, "topic": topic->title, format, "venue": venue->name, coverImage, recapUrl, recapType
   },
   "community": *[_type == "event" && isCommunity] | order(startsAt desc)[0...1]{
     _id, title, slug
-  }
+  },
+  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }
 }`)
 
 export const EVENT_BY_SLUG_QUERY = defineQuery(`*[_type == "event" && slug.current == $slug][0]{
@@ -63,7 +70,8 @@ export const ARTICLE_BY_SLUG_QUERY = defineQuery(`*[_type == "article" && slug.c
   }
 }`)
 
-// $format: one of the format enums or null (All); $topic: topic slug or null; $sort: 'newest'|'oldest'
+// $format: one of the format enums or null (All); $topic: topic slug or null;
+// $sort: 'newest'|'oldest'; $q: optional case-insensitive search string.
 export const MEDIA_QUERY = defineQuery(`{
   "featured": *[_type == "mediaItem" && featured == true] | order(publishedAt desc)[0]{
     _id, title, slug, format, thumbnail, durationLabel, url
@@ -71,6 +79,7 @@ export const MEDIA_QUERY = defineQuery(`{
   "items": *[_type == "mediaItem"
       && (!defined($format) || format == $format)
       && (!defined($topic) || topic->slug.current == $topic)
+      && (!defined($q) || title match ($q + "*"))
     ] | order(
         select($sort == "oldest" => publishedAt) asc,
         select($sort != "oldest" => publishedAt) desc
@@ -81,7 +90,7 @@ export const MEDIA_QUERY = defineQuery(`{
 }`)
 
 export const ABOUT_QUERY = defineQuery(`*[_type == "aboutContent"][0]{
-  founding, stats, values,
+  heroImage, founding, stats, values,
   "team": team[]->{ _id, name, role, photo, isCutout },
   "partners": partners[]->{ _id, name, logo, url }
 }`)
