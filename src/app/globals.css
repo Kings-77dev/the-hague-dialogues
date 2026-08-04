@@ -117,7 +117,7 @@
     transition: 0.32s ease;
     cursor: pointer;
   }
-  .btn:hover { transform: translateY(-2px); background: #0b1828; }
+  .btn:hover { transform: translateY(var(--hover-lift)); background: #0b1828; }
   .btn:disabled, .contact-form .send:disabled {
     opacity: 0.55; cursor: not-allowed; transform: none;
   }
@@ -356,7 +356,7 @@
   .involve-grid { display: grid; grid-template-columns: 210px repeat(4, 1fr); gap: 20px; align-items: stretch; }
   .involve-title { font: 900 2.35rem/0.95 var(--font-display); letter-spacing: -0.05em; text-transform: uppercase; border-right: 1px solid var(--line); padding-right: 24px; }
   .involve-card { border: 1px solid var(--line); padding: 26px; background: #f1eee8; min-height: 118px; transition: 0.25s; }
-  .involve-card:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); }
+  .involve-card:hover { transform: translateY(var(--hover-lift)); box-shadow: 0 18px 50px rgba(11, 31, 51, 0.1); }
   .involve-card.dark { background: var(--navy-2); color: var(--white); }
   .involve-card h3 { font: 900 1.15rem/1 var(--font-display); margin: 0 0 18px; }
   .involve-card .small-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--navy-2); color: var(--white); font: 900 0.58rem/1 var(--font-display); letter-spacing: 0.16em; text-transform: uppercase; padding: 10px 14px; }
@@ -679,7 +679,7 @@
   /* ---------- Get Involved ---------- */
   .pathways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 42px; }
   .pathway { border: 1px solid var(--line); padding: 36px 34px; display: flex; flex-direction: column; background: var(--white); transition: transform 0.25s, box-shadow 0.25s; text-decoration: none; }
-  .pathway:hover { box-shadow: 0 18px 50px rgba(11, 31, 51, 0.1); transform: translateY(-3px); }
+  .pathway:hover { box-shadow: 0 18px 50px rgba(11, 31, 51, 0.1); transform: translateY(var(--hover-lift)); }
   .pw-num { font: 800 0.72rem/1 var(--font-display); letter-spacing: 0.2em; color: var(--muted); margin-bottom: 20px; }
   .pathway h3 { font: 900 1.62rem/1.05 var(--font-display); letter-spacing: -0.02em; color: var(--ink); margin: 0 0 12px; }
   .pathway p { color: #48555f; line-height: 1.55; margin: 0 0 24px; flex: 1; }
