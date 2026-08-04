@@ -486,7 +486,7 @@
   .rm-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--cream); color: var(--navy); padding: 15px; font: 900 0.78rem/1 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; border-radius: 2px; transition: 0.2s; }
   /* Scoped to <a> — the "Registration TBC" placeholder is a non-interactive
      <span class="rm-btn"> and must not light up on hover. */
-  a.rm-btn:hover { background: #fff; }
+  a.rm-btn:hover { background: var(--white); }
   span.rm-btn { opacity: 0.7; cursor: default; }
   .rm-cal { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; margin-top: 10px; background: none; border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; padding: 13px; font: 800 0.72rem/1 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; border-radius: 2px; cursor: pointer; transition: 0.2s; }
   .rm-cal:hover { background: rgba(255, 255, 255, 0.08); }
@@ -719,7 +719,7 @@
   .ci-val a:hover { text-decoration: underline; }
   .ci-socials { display: flex; gap: 12px; }
   .ci-socials a { width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--navy); transition: 0.2s; }
-  .ci-socials a:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .ci-socials a:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
   .ci-socials svg { width: 19px; height: 19px; }
 
   /* ---------- Misc extracted-from-inline rules ---------- */
