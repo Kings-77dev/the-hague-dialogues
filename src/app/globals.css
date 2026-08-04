@@ -467,10 +467,14 @@
   .rm-cal svg { width: 17px; height: 17px; flex: 0 0 auto; }
   .rm-foot { margin: 16px 0 0; color: rgba(255, 250, 242, 0.5); font: 500 0.82rem/1.4 var(--font-body); text-align: center; }
 
-  /* ---------- Shared page-head (News, Contact, About-ish) ---------- */
-  .page-head { background: var(--navy); color: var(--white); padding: 148px 0 70px; }
+  /* ---------- Shared page-head (News, Contact, About-ish) ----------
+     Single source of truth — this was previously redefined further down
+     (media-variant section) with conflicting padding/measure, and the later
+     block silently won. Merged here; keep only one definition. */
+  .page-head { position: relative; overflow: hidden; background: var(--navy); color: var(--white); padding: 148px 0 64px; }
+  .page-head .container { position: relative; z-index: 2; }
   .page-head .eyebrow { color: var(--white); }
-  .page-head h1 { font-size: clamp(2.6rem, 5.6vw, 5rem); max-width: 16ch; margin: 20px 0 22px; }
+  .page-head h1 { font-size: clamp(2.6rem, 5.6vw, 5rem); max-width: 18ch; margin: 20px 0 22px; }
   .page-lede { color: rgba(255, 250, 242, 0.7); font-size: clamp(1.05rem, 1.4vw, 1.3rem); max-width: 48ch; }
 
   /* ---------- News: featured + tabs ---------- */
@@ -596,10 +600,8 @@
   .topic-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--navy); color: #fff; padding: 18px 32px; font: 900 0.76rem/1 var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; border-radius: 2px; transition: background 0.25s; }
   .topic-btn:hover { background: var(--navy-3); }
 
-  /* ---------- Page-head media variant (Contact/Get Involved) ---------- */
-  .page-head { position: relative; overflow: hidden; padding: 148px 0 64px; }
-  .page-head .container { position: relative; z-index: 2; }
-  .page-head h1 { max-width: 18ch; }
+  /* ---------- Page-head media variant (Contact/Get Involved) ----------
+     Base .page-head rules live in the shared block above. */
   .page-head-media { position: absolute; top: 0; right: 0; width: 44%; height: 100%; z-index: 0; }
   .page-head-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.8) brightness(0.6); }
   .page-head-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--navy) 8%, rgba(7, 17, 29, 0.45) 100%); }
