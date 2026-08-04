@@ -374,17 +374,36 @@
   .involve-card .small-btn .arrow { transition: transform var(--dur-fast); }
   .involve-card:hover .small-btn .arrow { transform: translateX(5px); }
 
-  /* ---------- Footer ---------- */
-  .footer { background: var(--navy); color: var(--white); padding: 74px 0 34px; }
-  .footer-top { display: grid; grid-template-columns: 1fr 0.9fr; gap: 68px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 60px; }
-  .footer h2 { font: 900 clamp(2.4rem, 5vw, 5rem)/0.95 var(--font-display); letter-spacing: -0.055em; text-transform: uppercase; margin: 0; }
+  /* ---------- Footer — "Editorial Close", 3 zones (design-shotgun 2026-08-04) ---------- */
+  .footer { background: var(--navy); color: var(--white); }
+  /* Zone 1 — social band */
+  .footer-social { background: var(--navy-2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .footer-social .container { display: flex; align-items: center; justify-content: space-between; gap: 20px 28px; padding: 34px 0; flex-wrap: wrap; }
+  .fs-left { display: flex; align-items: baseline; gap: 12px 26px; flex-wrap: wrap; }
+  .fs-handle { font: 900 clamp(1.3rem, 2.3vw, 1.9rem)/1 var(--font-display); letter-spacing: -0.03em; color: var(--white); }
+  .fs-handle:hover { text-decoration: underline; text-underline-offset: 6px; }
+  .fs-icons { display: flex; gap: 12px; }
+  .fs-icons a { width: 46px; height: 46px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 50%; display: grid; place-items: center; color: var(--white); transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast); }
+  .fs-icons a:hover { background: var(--cream); color: var(--navy); border-color: var(--cream); }
+  .fs-icons svg { width: 19px; height: 19px; }
+  /* Zone 2 — body */
+  .footer-body .container { display: grid; grid-template-columns: 1.2fr 0.5fr 0.5fr 1fr; gap: 48px; padding: 60px 0 54px; }
+  .fb-tagline { margin: 14px 0 0; color: rgba(255, 255, 255, 0.6); font-size: 0.92rem; line-height: 1.55; max-width: 30ch; }
+  .fcol a { display: block; padding: 7px 0; color: rgba(255, 255, 255, 0.72); font-size: 0.95rem; transition: color var(--dur-fast); }
+  .fcol a:hover { color: var(--white); }
+  .fcol-label { font: 800 0.68rem/1 var(--font-display); letter-spacing: 0.24em; text-transform: uppercase; color: rgba(255, 250, 242, 0.5); margin: 0 0 16px; }
+  /* Shared newsletter chrome (also used by the Get Involved in-page form) */
   .newsletter { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12); padding: 30px; }
   .newsletter input { width: 100%; padding: 18px 20px; background: var(--cream); border: 0; margin: 18px 0; color: var(--navy); }
-  .footer-bottom { display: grid; grid-template-columns: 1.2fr 1.5fr auto; gap: 36px; align-items: end; padding-top: 34px; }
-  .footer-links { display: flex; flex-wrap: wrap; gap: 24px; color: rgba(255, 255, 255, 0.55); font-size: 0.9rem; }
-  .footer-links a { transition: color var(--dur-fast); }
-  .footer-links a:hover { color: var(--white); }
-  .footer small { color: rgba(255, 255, 255, 0.6); }
+  /* …but bare inside the footer body — the zone provides the frame. */
+  .footer-news .newsletter { background: none; border: 0; padding: 0; }
+  /* Zone 3 — legal bar */
+  .footer-legal { background: #040a12; }
+  .footer-legal .container { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 15px 0; flex-wrap: wrap; }
+  .footer-legal small, .footer-legal a { color: rgba(255, 255, 255, 0.6); font-size: 0.82rem; transition: color var(--dur-fast); }
+  .footer-legal a:hover { color: var(--white); }
+  .footer-legal .fl-support { background: var(--cream); color: var(--navy); font: 900 0.66rem/1 var(--font-display); letter-spacing: 0.16em; text-transform: uppercase; padding: 12px 20px; transition: background var(--dur-fast); }
+  .footer-legal .fl-support:hover { background: var(--paper); color: var(--navy); }
 
   /* ---------- Quote band ---------- */
   .quote-band { background: var(--cream); padding: 90px 0; }
@@ -848,7 +867,9 @@
   .intro-grid h2 { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 20px; }
   .card-grid, .article-grid { grid-template-columns: repeat(2, 1fr); }
   .media-mosaic { grid-template-columns: 1fr; }
-  .support-inner, .footer-top, .footer-bottom, .quote-card { grid-template-columns: 1fr; }
+  .support-inner, .quote-card { grid-template-columns: 1fr; }
+  .footer-body .container { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .footer-news { grid-column: 1 / -1; }
   .quote-img { height: 360px; clip-path: none; }
   .involve-grid { grid-template-columns: repeat(2, 1fr); }
   .involve-title { grid-column: 1 / -1; border-right: 0; border-bottom: 1px solid var(--line); padding-bottom: 18px; }
@@ -875,7 +896,8 @@
   .support { padding: 58px 0; }
   .support-inner { align-items: start; }
   .involve-grid { grid-template-columns: 1fr; }
-  .footer { padding-top: 54px; }
+  .footer-body .container { grid-template-columns: 1fr; gap: 28px; }
+  .footer-social .container { padding: 26px 0; }
   .events-hero { padding-top: 130px; }
   .tabs { overflow-x: auto; }
   .tabs .container { width: max-content; padding-left: 20px; }
@@ -974,7 +996,7 @@
 }
 .ev-back { padding-block: 12px; margin-top: -12px; margin-bottom: 12px; }   /* 24px gap − 12px padding */
 .back-link { padding-block: 12px; margin-top: -12px; margin-bottom: 14px; } /* 26px gap − 12px padding */
-.footer-links a { padding-block: 10px; margin-block: -10px; }
+.footer-legal a:not(.fl-support) { padding-block: 10px; margin-block: -10px; }
 
 /* Scroll-reveal (see components/Reveal.tsx). IntersectionObserver toggles
    .is-shown; this is the fade + rise. */
