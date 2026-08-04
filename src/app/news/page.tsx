@@ -116,7 +116,9 @@ export default async function NewsPage({
                   {formatLongDate(featured.publishedAt)}
                   {featured.readingMinutes && <> · {featured.readingMinutes} min read</>}
                 </div>
-                <span className="card-cta">Read article →</span>
+                <span className="card-cta">
+                  Read article <span aria-hidden>→</span>
+                </span>
               </div>
             </Link>
           )}
