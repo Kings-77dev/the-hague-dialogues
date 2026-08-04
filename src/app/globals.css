@@ -917,6 +917,20 @@
   --focus-ring: var(--white);
 }
 
+/* Text-link CTAs rendered ~12px-tall hit areas (font-size alone, no padding).
+   Padding grows the target to ≥36px; the negative margins cancel the layout
+   impact so nothing visually moves. */
+.view-all,
+.card-cta,
+.pw-link,
+.fb-watch {
+  padding-block: 12px;
+  margin-block: -12px;
+}
+.ev-back { padding-block: 12px; margin-top: -12px; margin-bottom: 12px; }   /* 24px gap − 12px padding */
+.back-link { padding-block: 12px; margin-top: -12px; margin-bottom: 14px; } /* 26px gap − 12px padding */
+.footer-links a { padding-block: 10px; margin-block: -10px; }
+
 /* Scroll-reveal (see components/Reveal.tsx). IntersectionObserver toggles
    .is-shown; this is the fade + rise. */
 .reveal {
