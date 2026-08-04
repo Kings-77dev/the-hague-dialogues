@@ -3,6 +3,7 @@ import Link from 'next/link'
 import {client} from '@/sanity/client'
 import {MEDIA_QUERY} from '@/sanity/queries'
 import {SanityImage} from '@/components/SanityImage'
+import {AutoSubmitSelect} from '@/components/AutoSubmitSelect'
 import {formatMonthYear} from '@/lib/date'
 
 export const revalidate = 300
@@ -148,7 +149,7 @@ export default async function MediaPage({
                   <label htmlFor="topic-select" className="sr-only">
                     Topic
                   </label>
-                  <select
+                  <AutoSubmitSelect
                     id="topic-select"
                     name="topic"
                     defaultValue={activeTopic ?? ''}
@@ -159,16 +160,16 @@ export default async function MediaPage({
                         {t.title}
                       </option>
                     ))}
-                  </select>
+                  </AutoSubmitSelect>
                 </div>
                 <div className="m-select">
                   <label htmlFor="sort-select" className="sr-only">
                     Sort by
                   </label>
-                  <select id="sort-select" name="sort" defaultValue={sort}>
+                  <AutoSubmitSelect id="sort-select" name="sort" defaultValue={sort}>
                     <option value="newest">Newest</option>
                     <option value="oldest">Oldest</option>
-                  </select>
+                  </AutoSubmitSelect>
                 </div>
               </div>
               {/* Hidden format input lets the submit button preserve the active
