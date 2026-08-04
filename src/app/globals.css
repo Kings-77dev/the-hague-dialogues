@@ -571,7 +571,10 @@
   .m-controls { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
   .m-pills { display: flex; gap: 8px; flex-wrap: wrap; }
   .m-pill { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16); color: rgba(255, 250, 242, 0.82); padding: 9px 15px; border-radius: 2px; font: 800 0.64rem/1 var(--font-display); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; }
-  .m-pill.active, .m-pill:hover { background: var(--cream); color: var(--navy); border-color: var(--cream); }
+  /* Hover is an intermediate state — only .active gets the full cream fill,
+     so the selected pill stays distinguishable while browsing. */
+  .m-pill:hover { background: rgba(255, 255, 255, 0.16); color: var(--white); border-color: rgba(255, 255, 255, 0.4); }
+  .m-pill.active { background: var(--cream); color: var(--navy); border-color: var(--cream); }
   .m-selects { display: flex; gap: 10px; }
   .m-select { position: relative; }
   .m-select select { appearance: none; -webkit-appearance: none; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16); color: #fff; padding: 11px 34px 11px 14px; border-radius: 2px; font: 800 0.64rem/1 var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
