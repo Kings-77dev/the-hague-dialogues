@@ -49,7 +49,8 @@ export function EventPosterCard({
           {status === 'past' ? 'Watch recap' : 'Register'} <span aria-hidden>→</span>
         </span>
         <div className="event-info">
-          <h3>{event.title}</h3>
+          {/* Visual duplicate of the titlebar heading — one title per card in the AT tree. */}
+          <h3 aria-hidden>{event.title}</h3>
           {event.venue && (
             <div className="event-location">
               <span className="pin" aria-hidden>
