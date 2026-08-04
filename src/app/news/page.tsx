@@ -104,6 +104,7 @@ export default async function NewsPage({
                   image={featured.coverImage}
                   alt={featured.title}
                   sizes="(max-width: 1000px) 100vw, 60vw"
+                  priority
                 />
               </div>
               <div className="featured-body">
