@@ -883,6 +883,24 @@
   border: 0;
 }
 
+/* Skip-to-content link: first tab stop, hidden until keyboard-focused.
+   Lets keyboard users bypass the fixed header + sticky filter bars. */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  background: var(--navy);
+  color: var(--white);
+  padding: 14px 20px;
+  font: 800 0.78rem/1 var(--font-display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: translateY(calc(-100% - 20px));
+  transition: transform 0.2s ease;
+}
+.skip-link:focus-visible { transform: none; }
+
 /* Visible keyboard focus ring on every interactive element. Colour adapts:
    dark by default, light inside dark sections (set via --focus-ring cascade). */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {

@@ -75,8 +75,11 @@ export default async function RootLayout({
             __html: "document.documentElement.classList.add('js')",
           }}
         />
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <Header supportHref={supportHref} />
-        <main>{children}</main>
+        <main id="main">{children}</main>
         <Footer settings={settings} supportHref={supportHref} />
       </body>
     </html>
