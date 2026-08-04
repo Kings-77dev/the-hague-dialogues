@@ -66,6 +66,9 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${montserrat.variable} ${dmSans.variable} antialiased`}
+      // The pre-paint script below adds a `js` class before React hydrates, so
+      // the server/client className intentionally differ on this one element.
+      suppressHydrationWarning
     >
       <body>
         {/* Mark JS as available before paint so scroll-reveal only arms its
