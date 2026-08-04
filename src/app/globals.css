@@ -872,7 +872,25 @@
 .quote-band,
 .newsletter,
 .involve-card.dark,
-.related {
+.related,
+/* Dark surfaces that were missing from this list — their focus ring fell back
+   to navy-on-navy (invisible). Every navy background must be listed here. */
+.site-header,
+.mobile-panel,
+.filter-bar.dark,
+.m-toolbar,
+.media-wrap,
+.events-section.ev-dark,
+.events-hero,
+.ev-hero,
+.article-hero,
+.reg-module,
+.page-head,
+.about-hero,
+.stats,
+.featured,
+.member,
+.speaker {
   --focus-ring: var(--white);
 }
 
