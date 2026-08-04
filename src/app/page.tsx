@@ -4,6 +4,7 @@ import Image from 'next/image'
 import {client} from '@/sanity/client'
 import {HOME_QUERY, SETTINGS_QUERY} from '@/sanity/queries'
 import {EventPosterCard} from '@/components/EventPosterCard'
+import {SanityImage} from '@/components/SanityImage'
 import {ArticleCard} from '@/components/ArticleCard'
 import {MediaPosterCard} from '@/components/MediaPosterCard'
 import {HeroSlideshow} from '@/components/HeroSlideshow'
@@ -255,13 +256,21 @@ export default async function Home() {
                 </p>
               </div>
               <div className="quote-img relative">
-                <Image
-                  src="/images/c5275197-587c-4ad9-aac1-1d1fde28905a.jpeg"
-                  alt="The Hague Dialogues event"
-                  fill
-                  sizes="(max-width: 1000px) 100vw, 360px"
-                  className="object-cover"
-                />
+                {home.quote.image ? (
+                  <SanityImage
+                    image={home.quote.image}
+                    alt="The Hague Dialogues event"
+                    sizes="(max-width: 1000px) 100vw, 360px"
+                  />
+                ) : (
+                  <Image
+                    src="/images/c5275197-587c-4ad9-aac1-1d1fde28905a.jpeg"
+                    alt="The Hague Dialogues event"
+                    fill
+                    sizes="(max-width: 1000px) 100vw, 360px"
+                    className="object-cover"
+                  />
+                )}
               </div>
             </article>
           </div>

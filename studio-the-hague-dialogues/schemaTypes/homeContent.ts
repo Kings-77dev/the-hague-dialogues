@@ -32,6 +32,9 @@ export const homeContent = defineType({
       fields: [
         {name: 'text', type: 'text'},
         {name: 'attribution', type: 'reference', to: [{type: 'person'}]},
+        // Editor-controlled photo for the homepage quote band (falls back to a
+        // bundled image in the app when unset).
+        {name: 'image', type: 'image', options: {hotspot: true}},
       ],
     }),
   ],

@@ -15,6 +15,13 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
 export type PersonReference = {
   _ref: string;
   _type: "reference";
@@ -35,6 +42,13 @@ export type AboutContent = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   founding?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -75,6 +89,22 @@ export type AboutContent = {
   >;
 };
 
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+};
+
 export type EventReference = {
   _ref: string;
   _type: "reference";
@@ -90,18 +120,28 @@ export type HomeContent = {
   _rev: string;
   heroHeading?: string;
   heroLede?: string;
+  heroImages?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    label?: string;
+    _type: "image";
+    _key: string;
+  }>;
   featuredEvent?: EventReference;
   quote?: {
     text?: string;
     attribution?: PersonReference;
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
   };
-};
-
-export type SanityImageAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
 export type SiteSettings = {
@@ -123,22 +163,6 @@ export type SiteSettings = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x: number;
-  y: number;
-  height: number;
-  width: number;
 };
 
 export type TopicReference = {
@@ -475,15 +499,15 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | SanityImageAssetReference
   | PersonReference
   | PartnerReference
   | AboutContent
-  | EventReference
-  | HomeContent
-  | SanityImageAssetReference
-  | SiteSettings
   | SanityImageCrop
   | SanityImageHotspot
+  | EventReference
+  | HomeContent
+  | SiteSettings
   | TopicReference
   | MediaItem
   | Slug
@@ -505,17 +529,33 @@ export type AllSanitySchemaTypes =
 
 // Source: ../src/sanity/queries.ts
 // Variable: HOME_QUERY
-// Query: {  "home": *[_type == "homeContent"][0]{    heroHeading, heroLede,    heroImages[]{ ..., asset, alt, label },    quote{ text, attribution->{name, role} },    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }  },  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,    "venue": venue->name  },  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage  },  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{    _id, title, slug, format, thumbnail, durationLabel, url  }}
+// Query: {  "home": *[_type == "homeContent"][0]{    heroHeading, heroLede,    heroImages[]{ ..., asset, alt, label },    quote{ text, attribution->{name, role}, image },    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }  },  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,    "venue": venue->name  },  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage  },  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{    _id, title, slug, format, thumbnail, durationLabel, url  }}
 export type HOME_QUERY_RESULT = {
   home: {
     heroHeading: string | null;
     heroLede: string | null;
-    heroImages: null;
+    heroImages: Array<{
+      asset: SanityImageAssetReference | null;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt: string | null;
+      label: string | null;
+      _type: "image";
+      _key: string;
+    }> | null;
     quote: {
       text: string | null;
       attribution: {
         name: string;
         role: string | null;
+      } | null;
+      image: {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
       } | null;
     } | null;
     featuredEvent: {
@@ -898,7 +938,13 @@ export type MEDIA_QUERY_RESULT = {
 // Variable: ABOUT_QUERY
 // Query: *[_type == "aboutContent"][0]{  heroImage, founding, stats, values,  "team": team[]->{ _id, name, role, photo, isCutout },  "partners": partners[]->{ _id, name, logo, url }}
 export type ABOUT_QUERY_RESULT = {
-  heroImage: null;
+  heroImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
   founding: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -991,7 +1037,7 @@ export type SITEMAP_SLUGS_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '{\n  "home": *[_type == "homeContent"][0]{\n    heroHeading, heroLede,\n    heroImages[]{ ..., asset, alt, label },\n    quote{ text, attribution->{name, role} },\n    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }\n  },\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,\n    "venue": venue->name\n  },\n  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{\n    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage\n  },\n  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{\n    _id, title, slug, format, thumbnail, durationLabel, url\n  }\n}': HOME_QUERY_RESULT;
+    '{\n  "home": *[_type == "homeContent"][0]{\n    heroHeading, heroLede,\n    heroImages[]{ ..., asset, alt, label },\n    quote{ text, attribution->{name, role}, image },\n    featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }\n  },\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage,\n    "venue": venue->name\n  },\n  "latestNews": *[_type == "article"] | order(publishedAt desc)[0...3]{\n    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage\n  },\n  "media": *[_type == "mediaItem"] | order(publishedAt desc)[0...5]{\n    _id, title, slug, format, thumbnail, durationLabel, url\n  }\n}': HOME_QUERY_RESULT;
     '{\n  "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now\n      && (!defined($topic) || topic->slug.current == $topic)\n    ] | order(startsAt asc){\n    _id, title, slug, startsAt, "topic": topic->title, format, coverImage, "venue": venue->name\n  },\n  "past": *[_type == "event" && !isCommunity && startsAt < $now\n      && (!defined($topic) || topic->slug.current == $topic)\n    ] | order(startsAt desc){\n    _id, title, slug, startsAt, "topic": topic->title, format, "venue": venue->name, coverImage, recapUrl, recapType\n  },\n  "community": *[_type == "event" && isCommunity] | order(startsAt desc)[0...1]{\n    _id, title, slug\n  },\n  "topics": *[_type == "topic"] | order(title asc){ _id, title, "slug": slug.current }\n}': EVENTS_QUERY_RESULT;
     '*[_type == "event" && slug.current == $slug][0]{\n  _id, title, startsAt, endsAt, entryNote, registrationUrl, recapUrl, recapType, standfirst,\n  "topic": topic->title, format, coverImage, body,\n  "venue": venue->{ name, addressLine, city },\n  "speakers": speakers[]->{ _id, name, role, photo, isCutout },\n  "related": *[_type == "event" && _id != ^._id && topic._ref == ^.topic._ref] | order(startsAt desc)[0...3]{\n    _id, title, slug, startsAt, "topic": topic->title, coverImage\n  }\n}': EVENT_BY_SLUG_QUERY_RESULT;
     '{\n  "featured": *[_type == "article" && featured == true] | order(publishedAt desc)[0]{\n    _id, title, slug, standfirst, publishedAt, "topic": topic->title, format, coverImage, readingMinutes,\n    "author": author->{ name }\n  },\n  "articles": *[_type == "article" && (!defined($format) || format == $format)] | order(publishedAt desc)[0...$limit]{\n    _id, title, slug, publishedAt, standfirst, "topic": topic->title, format, coverImage\n  },\n  "total": count(*[_type == "article" && (!defined($format) || format == $format)])\n}': NEWS_QUERY_RESULT;

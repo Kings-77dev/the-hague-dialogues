@@ -6,7 +6,7 @@ export const HOME_QUERY = defineQuery(`{
   "home": *[_type == "homeContent"][0]{
     heroHeading, heroLede,
     heroImages[]{ ..., asset, alt, label },
-    quote{ text, attribution->{name, role} },
+    quote{ text, attribution->{name, role}, image },
     featuredEvent->{ _id, title, slug, startsAt, "topic": topic->title, coverImage, "venue": venue->name }
   },
   "upcoming": *[_type == "event" && !isCommunity && startsAt >= $now] | order(startsAt asc)[0...3]{
