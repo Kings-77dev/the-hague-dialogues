@@ -329,7 +329,9 @@
 
   /* ---------- Media mosaic ---------- */
   .media-mosaic { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; }
-  .media-feature { min-height: 430px; }
+  /* Scoped: .media-feature is reused by the Media page hero card, which sizes
+     itself with aspect-ratio — the homepage-mosaic min-height must not leak. */
+  .media-mosaic .media-feature { min-height: 430px; }
   .media-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   .media-stack .poster-card { min-height: 205px; }
   .media-stack .poster-card h3 { font-size: 1.35rem; }
