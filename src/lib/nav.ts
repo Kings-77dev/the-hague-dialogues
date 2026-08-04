@@ -18,6 +18,7 @@ export const FOOTER_NAV = [
   {label: 'Get Involved', href: '/get-involved'},
   {label: 'News', href: '/news'},
   {label: 'Contact', href: '/contact'},
+  {label: 'Privacy', href: '/privacy'},
 ] as const
 
 export type NavItem = {label: string; href: string}

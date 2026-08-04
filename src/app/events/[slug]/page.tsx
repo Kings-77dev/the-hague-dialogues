@@ -6,6 +6,7 @@ import {EVENT_BY_SLUG_QUERY} from '@/sanity/queries'
 import {SanityImage} from '@/components/SanityImage'
 import {Prose} from '@/components/Prose'
 import {JsonLd} from '@/components/JsonLd'
+import {AddToCalendar} from '@/components/AddToCalendar'
 import {formatLongDate} from '@/lib/date'
 import {urlFor} from '@/sanity/image'
 import {SITE_URL} from '@/lib/site'
@@ -219,13 +220,14 @@ export default async function EventDetailPage({params}: {params: Promise<Params>
             ) : (
               <span className="rm-btn">Registration TBC</span>
             )}
-            <button className="rm-cal" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" />
-              </svg>
-              Add to calendar
-            </button>
+            <AddToCalendar
+              title={event.title}
+              description={event.standfirst ?? undefined}
+              location={venueLabel ?? undefined}
+              start={event.startsAt}
+              end={event.endsAt ?? undefined}
+              url={`${SITE_URL}/events/${slug}`}
+            />
             <p className="rm-foot">Free for students · seats limited</p>
           </div>
         </aside>

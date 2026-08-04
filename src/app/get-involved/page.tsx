@@ -134,7 +134,7 @@ export default async function GetInvolvedPage() {
                 published. No spam.
               </p>
             </div>
-            <NewsletterForm />
+            <NewsletterForm source="get-involved" />
           </div>
         </div>
       </section>

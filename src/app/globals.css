@@ -825,3 +825,176 @@
   .event-category { right: 18px; bottom: 18px; font-size: 0.62rem; letter-spacing: 0.26em; }
   .cc-inner { flex-direction: column; align-items: flex-start; }
 }
+
+/* ============================================================
+   Accessibility, motion & form feedback (added post-handoff).
+   Kept at top level (outside media queries) so it applies at all widths.
+   ============================================================ */
+
+/* Screen-reader-only utility. Was referenced by markup (media filters,
+   newsletter label) but never defined — those labels were rendering visible. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Visible keyboard focus ring on every interactive element. Colour adapts:
+   dark by default, light inside dark sections (set via --focus-ring cascade). */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring, var(--navy));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.section.dark,
+.footer,
+.hero,
+.support,
+.quote-band,
+.newsletter,
+.involve-card.dark,
+.related {
+  --focus-ring: var(--white);
+}
+
+/* Scroll-reveal (see components/Reveal.tsx). IntersectionObserver toggles
+   .is-shown; this is the fade + rise. */
+.reveal {
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+/* Only arm the hidden state when JS is present (html.js set by an inline script
+   in the layout). Without JS the content stays visible — progressive
+   enhancement, no reliance on the observer ever running. */
+:root.js .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+}
+:root.js .reveal.is-shown {
+  opacity: 1;
+  transform: none;
+}
+
+/* Honeypot wrapper — visually gone, still submitted, hidden from AT. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Form validation + status feedback. */
+.field-err {
+  margin: 7px 0 0;
+  font: 500 0.82rem/1.3 var(--font-body);
+  color: #b3261e;
+}
+.contact-form input[aria-invalid='true'],
+.contact-form textarea[aria-invalid='true'] {
+  border-color: #b3261e;
+}
+.form-err {
+  margin: 14px 0 0;
+  font: 500 0.9rem/1.4 var(--font-body);
+  color: #b3261e;
+}
+.form-success {
+  margin: 0;
+  font: 500 0.95rem/1.5 var(--font-body);
+  color: var(--ink);
+}
+.form-privacy {
+  margin: 16px 0 0;
+  font: 400 0.8rem/1.5 var(--font-body);
+  color: var(--muted);
+}
+.form-privacy a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Newsletter sits on a dark band — feedback + consent need light text. */
+.newsletter .form-err {
+  color: #ffb4a8;
+}
+.newsletter .form-success {
+  color: var(--cream);
+}
+.nl-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 16px;
+}
+.nl-consent input {
+  width: auto;
+  margin: 3px 0 0;
+  flex: 0 0 auto;
+  accent-color: var(--cream);
+}
+.nl-consent label {
+  font: 400 0.82rem/1.45 var(--font-body);
+  color: rgba(255, 250, 242, 0.82);
+}
+.nl-consent a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Friendly Captcha widget spacing (renders only when a sitekey is set). */
+.frc-captcha {
+  margin: 4px 0 16px;
+}
+
+/* Add-to-calendar menu (components/AddToCalendar.tsx). */
+.atc {
+  position: relative;
+}
+.atc-menu {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.14);
+  overflow: hidden;
+}
+.atc-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: 500 0.9rem/1 var(--font-body);
+  color: var(--ink);
+}
+.atc-item:hover {
+  background: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

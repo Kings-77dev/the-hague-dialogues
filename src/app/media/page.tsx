@@ -58,7 +58,7 @@ export default async function MediaPage({
   const {featured, items, topics} = data
 
   return (
-    <main className="media-wrap">
+    <div className="media-wrap">
       {/* ---- Intro ---- */}
       <section className="m-intro">
         <div className="container">
@@ -282,6 +282,6 @@ export default async function MediaPage({
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }

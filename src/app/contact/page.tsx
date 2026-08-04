@@ -32,7 +32,7 @@ export default async function ContactPage() {
       <section className="section paper">
         <div className="container">
           <div className="contact-grid">
-            <ContactForm email={email} />
+            <ContactForm />
 
             <aside className="contact-info">
               <div className="ci-block">

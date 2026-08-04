@@ -68,6 +68,13 @@ export default async function RootLayout({
       className={`${montserrat.variable} ${dmSans.variable} antialiased`}
     >
       <body>
+        {/* Mark JS as available before paint so scroll-reveal only arms its
+            hidden state for JS users (progressive enhancement). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
         <Header supportHref={supportHref} />
         <main>{children}</main>
         <Footer settings={settings} supportHref={supportHref} />

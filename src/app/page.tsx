@@ -7,6 +7,7 @@ import {EventPosterCard} from '@/components/EventPosterCard'
 import {ArticleCard} from '@/components/ArticleCard'
 import {MediaPosterCard} from '@/components/MediaPosterCard'
 import {HeroSlideshow} from '@/components/HeroSlideshow'
+import {Reveal} from '@/components/Reveal'
 import {JsonLd} from '@/components/JsonLd'
 import {formatDate, formatTime} from '@/lib/date'
 import {SITE_URL} from '@/lib/site'
@@ -107,11 +108,13 @@ export default async function Home() {
                 View all →
               </Link>
             </div>
-            <div className="card-grid">
-              {upcoming.slice(0, 3).map((event) => (
-                <EventPosterCard key={event._id} event={event} status="upcoming" />
-              ))}
-            </div>
+            <Reveal>
+              <div className="card-grid">
+                {upcoming.slice(0, 3).map((event) => (
+                  <EventPosterCard key={event._id} event={event} status="upcoming" />
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
       )}
@@ -126,11 +129,13 @@ export default async function Home() {
                 View all →
               </Link>
             </div>
-            <div className="article-grid">
-              {latestNews.slice(0, 3).map((article) => (
-                <ArticleCard key={article._id} article={article} />
-              ))}
-            </div>
+            <Reveal>
+              <div className="article-grid">
+                {latestNews.slice(0, 3).map((article) => (
+                  <ArticleCard key={article._id} article={article} />
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
       )}
@@ -145,16 +150,18 @@ export default async function Home() {
                 View all →
               </Link>
             </div>
-            <div className="media-mosaic">
-              {featuredMedia && <MediaPosterCard item={featuredMedia} feature />}
-              {restMedia.length > 0 && (
-                <div className="media-stack">
-                  {restMedia.map((item) => (
-                    <MediaPosterCard key={item._id} item={item} />
-                  ))}
-                </div>
-              )}
-            </div>
+            <Reveal>
+              <div className="media-mosaic">
+                {featuredMedia && <MediaPosterCard item={featuredMedia} feature />}
+                {restMedia.length > 0 && (
+                  <div className="media-stack">
+                    {restMedia.map((item) => (
+                      <MediaPosterCard key={item._id} item={item} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Reveal>
           </div>
         </section>
       )}
