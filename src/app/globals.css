@@ -170,10 +170,14 @@
        the mobile breakpoint, matching .menu-toggle's behavior. */
     display: none;
     position: fixed; inset: 0; background: var(--navy); z-index: 90; color: var(--white);
-    transform: translateY(-100%); transition: 0.45s cubic-bezier(0.77, 0, 0.18, 1);
+    transform: translateY(-100%);
+    /* visibility keeps the closed panel's links out of the tab order and away
+       from screen readers; delayed so the slide-up animates before hiding. */
+    visibility: hidden;
+    transition: transform 0.45s cubic-bezier(0.77, 0, 0.18, 1), visibility 0s 0.45s;
     padding: 110px 32px 32px; flex-direction: column; justify-content: space-between;
   }
-  .menu-open .mobile-panel { transform: translateY(0); }
+  .menu-open .mobile-panel { transform: translateY(0); visibility: visible; transition-delay: 0s, 0s; }
   .mobile-panel a {
     display: block; font: 900 clamp(2.2rem, 9vw, 5rem)/0.95 var(--font-display);
     letter-spacing: -0.06em; text-transform: uppercase; padding: 10px 0; color: var(--white);
