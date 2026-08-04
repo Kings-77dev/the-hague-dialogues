@@ -111,6 +111,9 @@
     cursor: pointer;
   }
   .btn:hover { transform: translateY(-2px); background: #0b1828; }
+  .btn:disabled, .contact-form .send:disabled {
+    opacity: 0.55; cursor: not-allowed; transform: none;
+  }
   .btn.light { background: var(--cream); color: var(--navy); }
   .btn.ghost { background: transparent; border-color: rgba(255, 255, 255, 0.25); }
   .btn .arrow { transition: 0.25s; }
