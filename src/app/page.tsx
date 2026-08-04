@@ -9,7 +9,7 @@ import {MediaPosterCard} from '@/components/MediaPosterCard'
 import {HeroSlideshow} from '@/components/HeroSlideshow'
 import {Reveal} from '@/components/Reveal'
 import {JsonLd} from '@/components/JsonLd'
-import {formatDate, formatTime} from '@/lib/date'
+import {formatDate, formatDayMonth, formatTime} from '@/lib/date'
 import {SITE_URL} from '@/lib/site'
 import {DEFAULTS} from '@/lib/defaults'
 
@@ -33,6 +33,9 @@ export default async function Home() {
   // Homepage CTAs now point to /events (participation first). Donation remains
   // available via the chrome (header + footer Support buttons).
   const featured = home?.featuredEvent
+  // Soonest upcoming event drives the hero's primary CTA (registration is the
+  // site's #1 conversion goal — spec #1). Falls back to the events listing.
+  const nextEvent = upcoming?.[0]
   const [featuredMedia, ...restMedia] = media
 
   const orgJsonLd = {
@@ -55,6 +58,29 @@ export default async function Home() {
             <h1 className="display">{home?.heroHeading ?? DEFAULTS.homeHeroHeading}</h1>
             <div className="underline" />
             <p>{home?.heroLede ?? DEFAULTS.homeHeroLede}</p>
+            <div className="hero-actions">
+              {nextEvent?.slug?.current ? (
+                <Link className="btn light" href={`/events/${nextEvent.slug.current}`}>
+                  Register · {formatDayMonth(nextEvent.startsAt)}{' '}
+                  <span className="arrow" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              ) : (
+                <Link className="btn light" href="/events">
+                  Upcoming events{' '}
+                  <span className="arrow" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              )}
+              <Link className="btn ghost" href="/get-involved">
+                Get involved{' '}
+                <span className="arrow" aria-hidden>
+                  →
+                </span>
+              </Link>
+            </div>
           </div>
           <article className="feature-event">
             {/* Hero slideshow (backlog 9). Falls back to the featured event

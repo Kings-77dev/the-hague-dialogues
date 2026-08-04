@@ -216,7 +216,7 @@
   .hero-copy .display { font-size: clamp(3.8rem, 6.35vw, 6.9rem); color: var(--white); max-width: 720px; }
   .hero-copy .underline { width: min(280px, 44%); height: 4px; background: var(--navy-3); margin: 26px 0 18px; }
   .hero-copy p { max-width: 620px; color: rgba(255, 250, 242, 0.62); font-size: 1.03rem; }
-  .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 28px; }
   .hero-actions .btn { min-width: 190px; justify-content: center; }
   .hero-actions .btn.ghost { border-color: rgba(255, 255, 255, 0.28); background: rgba(7, 17, 29, 0.18); color: var(--white); }
   .hero-actions .btn.ghost:hover { background: rgba(255, 255, 255, 0.08); }
