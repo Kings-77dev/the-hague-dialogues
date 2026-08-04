@@ -16,7 +16,10 @@ export const metadata: Metadata = {
 const FORMATS = ['Recap', 'Opinion', 'Announcement', 'Interview'] as const
 type Format = (typeof FORMATS)[number]
 
-type SearchParams = Promise<{format?: string}>
+type SearchParams = Promise<{format?: string; limit?: string}>
+
+const PAGE_SIZE = 24
+const MAX_LIMIT = 96
 
 export default async function NewsPage({
   searchParams,
@@ -30,12 +33,22 @@ export default async function NewsPage({
   )
     ? (rawFormat as Format)
     : null
+  const limit = Math.min(
+    MAX_LIMIT,
+    Math.max(PAGE_SIZE, Number.parseInt(sp.limit ?? '', 10) || PAGE_SIZE),
+  )
 
-  const data = await client.fetch(NEWS_QUERY, {format: activeFormat, limit: 24})
+  const data = await client.fetch(NEWS_QUERY, {format: activeFormat, limit})
   const {featured, articles, total} = data
 
   const filterHref = (f: Format | null) =>
     f ? `/news?format=${encodeURIComponent(f)}` : '/news'
+  const loadMoreHref = () => {
+    const params = new URLSearchParams()
+    if (activeFormat) params.set('format', activeFormat)
+    params.set('limit', String(Math.min(MAX_LIMIT, limit + PAGE_SIZE)))
+    return `/news?${params.toString()}`
+  }
 
   return (
     <>
@@ -127,11 +140,13 @@ export default async function NewsPage({
             </div>
           )}
 
-          {articles.length < total && (
+          {articles.length < total && limit < MAX_LIMIT && (
             <div className="load-more">
-              <button type="button" className="btn-outline">
+              {/* Link-based pagination — works without JS; scroll={false} keeps
+                  the reading position when the longer list renders. */}
+              <Link href={loadMoreHref()} className="btn-outline" scroll={false}>
                 Load more articles
-              </button>
+              </Link>
             </div>
           )}
         </div>
