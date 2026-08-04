@@ -56,6 +56,11 @@ export default async function MediaPage({
     q,
   })
   const {featured, items, topics} = data
+  // The featured item gets the hero slot when no filters are active — don't
+  // repeat it as a grid tile below.
+  const showFeatured = Boolean(featured) && !activeFormat && !activeTopic && !q
+  const gridItems =
+    showFeatured && featured ? items.filter((m) => m._id !== featured._id) : items
 
   return (
     <div className="media-wrap">
@@ -178,7 +183,7 @@ export default async function MediaPage({
       </section>
 
       {/* ---- Featured (only when no filters active) ---- */}
-      {featured && !activeFormat && !activeTopic && !q && (
+      {showFeatured && featured && (
         <section className="section dark flush">
           <div className="container">
             <div className="m-feat-label">
@@ -218,11 +223,11 @@ export default async function MediaPage({
       )}
 
       {/* ---- Grid ---- */}
-      {items.length > 0 ? (
+      {gridItems.length > 0 ? (
         <section className="section dark flush-top">
           <div className="container">
             <div className="media-grid">
-              {items.map((m) => (
+              {gridItems.map((m) => (
                 <Link
                   key={m._id}
                   className="m-tile"
@@ -249,7 +254,7 @@ export default async function MediaPage({
             </div>
           </div>
         </section>
-      ) : (
+      ) : showFeatured ? null : (
         <section className="section dark">
           <div className="container">
             <p className="eyebrow">No matches</p>
