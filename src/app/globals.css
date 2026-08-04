@@ -700,6 +700,19 @@
   .section.flush-top { padding-top: 0; }
 }
 
+/* `.container` is ALSO a Tailwind v4 utility (width: 100% + per-breakpoint
+   max-width). Utilities outrank @layer components, so the components-layer
+   rule above never applied and pages lost their gutters at 1001–1344px
+   viewports (content flush against the screen edge). Unlayered rules beat
+   every layer — this copy is the one that actually wins. The ≤1000px width
+   override further down is likewise unlayered and later in source, so the
+   narrower mobile gutter still applies. */
+.container {
+  width: min(var(--max), calc(100% - 64px));
+  max-width: none;
+  margin-inline: auto;
+}
+
 /* about/get-involved/contact — 1000px / 900px / 620px / 560px */
 @media (max-width: 1000px) {
   .about-hero { min-height: auto; padding: 130px 0 80px; }
