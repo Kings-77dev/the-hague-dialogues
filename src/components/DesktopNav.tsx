@@ -12,15 +12,19 @@ export function DesktopNav() {
   const pathname = usePathname()
   return (
     <nav aria-label="Main navigation" className="desktop-nav">
-      {HEADER_NAV.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={isActive(pathname, item.href) ? 'active' : undefined}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {HEADER_NAV.map((item) => {
+        const active = isActive(pathname, item.href)
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={active ? 'active' : undefined}
+            aria-current={active ? 'page' : undefined}
+          >
+            {item.label}
+          </Link>
+        )
+      })}
     </nav>
   )
 }
