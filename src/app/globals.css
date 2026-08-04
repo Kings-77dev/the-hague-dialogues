@@ -238,8 +238,8 @@
   .poster-label { display: inline-flex; background: rgba(255, 255, 255, 0.85); color: var(--navy); font: 900 0.65rem/1 var(--font-display); letter-spacing: 0.16em; text-transform: uppercase; padding: 9px 12px; margin-bottom: 12px; }
   .poster-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; font: 800 0.68rem/1 var(--font-display); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
   .poster-cta { opacity: 0.55; transform: translateX(-8px); transition: 0.25s; }
-  .poster-card:hover img { transform: scale(1.06); }
-  .poster-card:hover .poster-cta { opacity: 1; transform: none; }
+  .poster-card:hover img, .poster-card:focus-within img { transform: scale(1.06); }
+  .poster-card:hover .poster-cta, .poster-card:focus-within .poster-cta { opacity: 1; transform: none; }
   /* Touch devices have no hover — the CTA must be fully visible at rest. */
   @media (hover: none) {
     .poster-cta { opacity: 1; transform: none; }
@@ -291,12 +291,14 @@
   .event-date strong { font: 900 clamp(1.75rem, 3.15vw, 2.75rem)/1 var(--font-display); letter-spacing: -0.045em; }
   .event-date span { font-size: 1.28rem; color: rgba(255, 255, 255, 0.68); }
   .event-category { position: absolute; right: 24px; bottom: 22px; z-index: 2; font: 900 0.82rem/1 var(--font-display); letter-spacing: 0.44em; text-transform: uppercase; color: var(--white); }
-  .event-poster:hover img { transform: scale(1.015); filter: saturate(0.74) brightness(0.58) contrast(1.04); }
-  .event-poster:hover::before { background: rgba(5, 13, 22, 0.08); }
-  .event-poster:hover .poster-titlebar { opacity: 0; transform: translateY(22px); pointer-events: none; }
-  .event-poster:hover .event-reveal { opacity: 1; pointer-events: auto; }
-  .event-poster:hover .event-info { transform: translateY(0); }
-  .event-poster:hover .event-register { transform: translateX(0); }
+  /* :focus-within mirrors every :hover rule so keyboard users get the same
+     reveal (date, venue, Register) that mouse users do. */
+  .event-poster:hover img, .event-poster:focus-within img { transform: scale(1.015); filter: saturate(0.74) brightness(0.58) contrast(1.04); }
+  .event-poster:hover::before, .event-poster:focus-within::before { background: rgba(5, 13, 22, 0.08); }
+  .event-poster:hover .poster-titlebar, .event-poster:focus-within .poster-titlebar { opacity: 0; transform: translateY(22px); pointer-events: none; }
+  .event-poster:hover .event-reveal, .event-poster:focus-within .event-reveal { opacity: 1; pointer-events: auto; }
+  .event-poster:hover .event-info, .event-poster:focus-within .event-info { transform: translateY(0); }
+  .event-poster:hover .event-register, .event-poster:focus-within .event-register { transform: translateX(0); }
   /* On touch devices, keep the resting state (photo + bottom titlebar) instead
      of pinning the dark reveal open. Tapping the card already navigates to the
      full event page where the same info lives, so we don't need both layers
