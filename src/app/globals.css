@@ -251,6 +251,17 @@
   .poster-card { min-height: 430px; position: relative; overflow: hidden; background: var(--navy); color: var(--white); isolation: isolate; }
   .poster-card.tall { min-height: 560px; }
   .poster-card img { position: absolute; inset: 0; transition: transform var(--dur-zoom) ease; filter: saturate(0.88) contrast(1.06); }
+  /* Legibility scrim for the media-mosaic tiles — the one card family without
+     one (event posters have gradient + titlebar, article thumbs .thumb::after,
+     media-page feature .fb-grad). Scoped to the mosaic so .event-poster's own
+     ::before is untouched; sits under .poster-content (z-index 3). */
+  .media-mosaic .poster-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(7, 17, 29, 0) 34%, rgba(7, 17, 29, 0.55) 68%, rgba(7, 17, 29, 0.88) 100%);
+  }
   .poster-card h3 {
     font: 900 clamp(1.55rem, 2vw, 2.45rem)/0.94 var(--font-display);
     letter-spacing: -0.05em; text-transform: uppercase; margin: 0;
