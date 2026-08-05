@@ -70,7 +70,9 @@ export default async function RootLayout({
       // the server/client className intentionally differ on this one element.
       suppressHydrationWarning
     >
-      <body>
+      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject
+          data-* attributes into <body> before React hydrates — noise, not a bug. */}
+      <body suppressHydrationWarning>
         {/* Mark JS as available before paint so scroll-reveal only arms its
             hidden state for JS users (progressive enhancement). */}
         <script
