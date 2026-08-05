@@ -114,7 +114,12 @@ export default async function Home() {
       {/* ---- Intro strip ---- */}
       <section className="intro-strip">
         <div className="container intro-grid">
-          <h2>{settings?.title ?? DEFAULTS.siteTitle}</h2>
+          <h2>
+            {/* One word per line — the stacked lockup mirrors the logo mark. */}
+            {(settings?.title ?? DEFAULTS.siteTitle).split(' ').map((word, i) => (
+              <span key={i}>{word}</span>
+            ))}
+          </h2>
           <p>{DEFAULTS.introStripBody}</p>
           <aside className="mini-donate">
             <small>{DEFAULTS.miniDonateBody}</small>
