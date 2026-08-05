@@ -234,8 +234,13 @@
 
   /* ---------- Intro strip / mini-donate ---------- */
   .intro-strip { background: var(--cream); border-bottom: 1px solid var(--line); }
-  .intro-grid { display: grid; grid-template-columns: 230px 1fr 300px; gap: 48px; align-items: center; padding: 36px 0; }
-  .intro-grid h2 { font: 900 2.5rem/0.95 var(--font-display); letter-spacing: -0.05em; text-transform: uppercase; margin: 0; border-right: 1px solid var(--line); padding-right: 36px; }
+  /* First column is auto, not a fixed 230px — the 2.5rem wordmark ("DIALOGUES")
+     is wider than 230px and was overflowing across its own border-right divider. */
+  .intro-grid { display: grid; grid-template-columns: auto 1fr 300px; gap: 48px; align-items: center; padding: 36px 0; }
+  /* min-content wraps the wordmark at its longest word ("DIALOGUES"), keeping
+     the stacked lockup while the auto column sizes to fit — the divider can
+     never be overrun. */
+  .intro-grid h2 { font: 900 2.5rem/0.95 var(--font-display); letter-spacing: -0.05em; text-transform: uppercase; margin: 0; border-right: 1px solid var(--line); padding-right: 36px; width: min-content; }
   .intro-grid p { margin: 0; color: #607084; }
   .mini-donate { background: var(--navy-2); color: var(--white); padding: 30px; }
   .mini-donate small { display: block; color: rgba(255, 255, 255, 0.58); margin-bottom: 14px; }
