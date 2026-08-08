@@ -83,15 +83,6 @@
     letter-spacing: 0.46em;
     text-transform: uppercase;
     display: inline-block;
-    position: relative;
-    padding-bottom: 12px;
-  }
-  .eyebrow::after {
-    content: "";
-    position: absolute;
-    left: 0; bottom: 0;
-    width: 74%; height: 2px;
-    background: currentColor;
   }
 
   .display {
